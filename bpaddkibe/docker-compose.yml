@@ -1,0 +1,52 @@
+﻿services:
+  db:
+    image: postgres:16-alpine
+    container_name: kendaraan-dinas-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-kendaraan_dinas}
+    ports:
+      - '${DB_PORT:-5432}:5432'
+    volumes:
+      - kendaraan-dinas-data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U ${DB_USERNAME:-postgres} -d ${DB_NAME:-kendaraan_dinas}',
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kendaraan-dinas-api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3300
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_NAME: ${DB_NAME:-kendaraan_dinas}
+      DB_SYNCHRONIZE: ${DB_SYNCHRONIZE:-true}
+      DB_SSL: 'false'
+      API_KEY: ${API_KEY:-dev-api-key-change-me}
+      CORS_ORIGINS: ${CORS_ORIGINS:-*}
+      DOCS_ENABLED: ${DOCS_ENABLED:-true}
+      SEED_PD: ${SEED_PD:-true}
+      SEED_DEMO: ${SEED_DEMO:-true}
+    ports:
+      - '${PORT:-3300}:3300'
+
+volumes:
+  kendaraan-dinas-data:

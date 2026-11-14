@@ -1,0 +1,40 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.*
+
+# builds
+dist/
+build/
+out/
+.next/
+.next-*/
+*.tsbuildinfo
+
+# env files
+.env
+.env*.local
+!.env.example
+
+# logs
+logs/
+*.log
+
+# tests / coverage
+coverage/
+.nyc_output/
+
+# misc
+.DS_Store
+Thumbs.db
+.vercel
+*.pid
+*.seed
+
+# editors
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
